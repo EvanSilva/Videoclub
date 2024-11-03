@@ -1,0 +1,20 @@
+CREATE DATABASE if not exists videoclub;
+USE videoclub;
+
+drop table if exists peliculas;
+CREATE TABLE if not exists peliculas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(100) NOT NULL,
+    protagonista VARCHAR(100) NOT NULL,
+    tematica ENUM('Accion', 'Aventura', 'Ciencia Ficcion', 'Romance', 'Terror'),
+    guion VARCHAR(100),
+    disponible boolean
+
+);
+
+INSERT INTO peliculas (titulo, protagonista, tematica, guion, disponible) VALUES
+('Inception', 'Leonardo DiCaprio', 'Ciencia Ficcion', 'Un ladrón que roba secretos de la mente a través de los sueños', true),
+('Titanic', 'Leonardo DiCaprio', 'Romance', 'Historia de amor en el trágico viaje del Titanic', true),
+('The Matrix', 'Keanu Reeves', 'Accion', 'Un hacker descubre la verdad sobre su realidad simulada', true),
+('Jurassic Park', 'Sam Neill', 'Aventura', 'Dinosaurios reviven en un parque temático que se sale de control', false),
+('The Shining', 'Jack Nicholson', 'Terror', 'Un escritor enloquece en un hotel aislado', false);
