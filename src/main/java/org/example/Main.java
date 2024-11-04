@@ -1,14 +1,13 @@
 package org.example;
 
-import org.example.pelicula.Pelicula;
+import org.example.modelo.Pelicula;
 
-import java.nio.file.FileAlreadyExistsException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import static org.example.pelicula.tools.*;
+import static org.example.modelo.Tools.*;
 
 public class Main {
 
@@ -28,7 +27,7 @@ public class Main {
 
             Scanner scanner = new Scanner(System.in);
 
-            System.out.print("Qué tipo de operacion quieres hacer: [Consultar] [Añadir] [Actualizar] [Eliminar] \n");
+            System.out.print("Qué tipo de operacion quieres hacer: [Consultar] [CE (Consulta especifica)] [Añadir] [Actualizar] [Eliminar] \n");
 
             String operacion = scanner.nextLine();
 
@@ -36,6 +35,17 @@ public class Main {
                 case "consultar":
                     System.out.println("Has seleccionado la operación de consulta.");
                     showPeliculas();
+                    break;
+
+                case "ce":
+
+                    System.out.println("Has seleccionado la operación de busqueda específica por nombre.");
+
+                    System.out.println("Dajme el nombre de la pelicula a consultar\n");
+                    String peliculaSearch = scanner.nextLine();
+
+                    buscarPeliculaPorId(peliculaSearch);
+
                     break;
 
                 case "añadir":
@@ -107,9 +117,6 @@ public class Main {
             System.out.println("Error al conectar con la base de datos.");
             e.printStackTrace();
         }
-
-
-
 
     }
 }

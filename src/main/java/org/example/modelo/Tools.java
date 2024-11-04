@@ -1,29 +1,24 @@
-package org.example.pelicula;
+package org.example.modelo;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import static org.example.Main.conexion;
 
-public class tools {
+public class Tools {
 
     private static String checkDisponibilidad(int booleano) {
-
         if (booleano == 0) {
             return "ALQUILADA";
-        } else
+        } else {
             return "DISPONIBLE";
+        }
     }
 
     public static void showPeliculas() throws SQLException {
-
         Statement statement = conexion.createStatement();
         ResultSet resultado = statement.executeQuery("SELECT * FROM peliculas");
 
         while (resultado.next()) {
-
             String id = resultado.getString(1);
             String titulo = resultado.getString(2);
             String protagonista = resultado.getString(3);
@@ -36,14 +31,37 @@ public class tools {
                     "Protagonista: " + protagonista + "\n" +
                     "Tematica: " + tematica + "\n" +
                     "Guion: " + guion + "\n" +
-                    "Disponibilidad: " + checkDisponibilidad(disponible) + "\n" );
-
+                    "Disponibilidad: " + checkDisponibilidad(disponible) + "\n");
         }
+    }
 
+    public static void buscarPeliculaPorId(String titulo) throws SQLException {
+        String query = "SELECT * FROM peliculas WHERE titulo = ?";
+        try (PreparedStatement statement = conexion.prepareStatement(query)) {
+            statement.setString(1, titulo);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    int peliculaId = resultado.getInt("id");
+                    String tituloPelicula = resultado.getString("titulo");
+                    String actorPrincipal = resultado.getString("protagonista");
+                    String tematica = resultado.getString("tematica");
+                    String guion = resultado.getString("guion");
+                    int disponibilidad = resultado.getInt("disponible");
+
+                    System.out.println("La información de " + tituloPelicula + " es: \n" +
+                            "Id: " + peliculaId + "\n" +
+                            "Protagonista: " + actorPrincipal + "\n" +
+                            "Tematica: " + tematica + "\n" +
+                            "Guion: " + guion + "\n" +
+                            "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                } else {
+                    System.out.println("No se encontró ninguna película con el ID proporcionado.");
+                }
+            }
+        }
     }
 
     public static void modificarPelicula(String tipoDatoACambiar, String nuevoDato, int idPeliculaModificar) throws SQLException {
-        // Validar que el tipo de dato que se desea cambiar es válido
         String sqUpdate = "";
 
         switch (tipoDatoACambiar.toLowerCase()) {
@@ -56,23 +74,21 @@ public class tools {
 
             case "disponible":
                 sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                // Convertir el nuevo dato a booleano
-                nuevoDato = nuevoDato.equalsIgnoreCase("true") ? "1" : "0"; // Convertir a "1" o "0"
+                nuevoDato = nuevoDato.equalsIgnoreCase("true") ? "1" : "0";
                 break;
 
             default:
                 System.out.println("Operación no válida. Por favor, selecciona una opción válida.");
-                return; // Salir del método si la operación no es válida
+                return;
         }
 
         try (PreparedStatement statementUpdate = conexion.prepareStatement(sqUpdate)) {
-            // Establecer los parámetros según el tipo de dato a modificar
             if (tipoDatoACambiar.equals("disponible")) {
                 statementUpdate.setInt(1, Integer.parseInt(nuevoDato));
             } else {
                 statementUpdate.setString(1, nuevoDato);
             }
-            statementUpdate.setInt(2, idPeliculaModificar); // ID de la película
+            statementUpdate.setInt(2, idPeliculaModificar);
 
             int filasActualizadas = statementUpdate.executeUpdate();
             if (filasActualizadas > 0) {
@@ -86,31 +102,32 @@ public class tools {
     }
 
     public static void deletePelicula(int idPelicula) throws SQLException {
-
-
         String sqDelete = "DELETE FROM peliculas WHERE id = ?";
-
-        PreparedStatement statementDelete = conexion.prepareStatement(sqDelete);
-
-        statementDelete.setInt(1, idPelicula);
-        statementDelete.executeUpdate();
-
+        try (PreparedStatement statementDelete = conexion.prepareStatement(sqDelete)) {
+            statementDelete.setInt(1, idPelicula);
+            int filasEliminadas = statementDelete.executeUpdate();
+            if (filasEliminadas > 0) {
+                System.out.println("Película eliminada exitosamente.");
+            } else {
+                System.out.println("No se encontró ninguna película con el ID proporcionado.");
+            }
+        }
     }
 
     public static void insertPelicula(Pelicula pelicula) throws SQLException {
         String sqlInsert = "INSERT INTO peliculas (titulo, protagonista, tematica, guion, disponible) VALUES (?, ?, ?, ?, ?)";
-
-        PreparedStatement statementInsert = conexion.prepareStatement(sqlInsert);
-
-        statementInsert.setString(1, pelicula.getTitulo()); // Título
-        statementInsert.setString(2, pelicula.getProtagonista()); // Protagonista
-        statementInsert.setString(3, pelicula.getTematica()); // Temática
-        statementInsert.setString(4, pelicula.getGuion()); // Guion
-        statementInsert.setBoolean(5, pelicula.getDisponible()); // Disponible
-
-        statementInsert.executeUpdate();
+        try (PreparedStatement statementInsert = conexion.prepareStatement(sqlInsert)) {
+            statementInsert.setString(1, pelicula.getTitulo());
+            statementInsert.setString(2, pelicula.getProtagonista());
+            statementInsert.setString(3, pelicula.getTematica());
+            statementInsert.setString(4, pelicula.getGuion());
+            statementInsert.setBoolean(5, pelicula.getDisponible());
+            statementInsert.executeUpdate();
+            System.out.println("Película insertada exitosamente.");
+        }
     }
-
-
-
 }
+
+
+
+

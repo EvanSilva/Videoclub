@@ -1,4 +1,4 @@
-package org.example.pelicula;
+package org.example.modelo;
 
 public class Pelicula {
 
