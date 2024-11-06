@@ -2,9 +2,19 @@ package org.example.modelo;
 
 import java.sql.*;
 
-import static org.example.Main.conexion;
-
 public class Tools {
+
+
+    public static Connection conexion;
+
+        public static void connectDB() {
+            try {
+                conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/videoclub", "root", "root");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
     private static String checkDisponibilidad(int booleano) {
         if (booleano == 0) {
@@ -35,10 +45,36 @@ public class Tools {
         }
     }
 
-    public static void buscarPeliculaPorId(String titulo) throws SQLException {
+    public static void buscarPeliculaPorTitulo(String titulo) throws SQLException {
         String query = "SELECT * FROM peliculas WHERE titulo = ?";
         try (PreparedStatement statement = conexion.prepareStatement(query)) {
             statement.setString(1, titulo);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    int peliculaId = resultado.getInt("id");
+                    String tituloPelicula = resultado.getString("titulo");
+                    String actorPrincipal = resultado.getString("protagonista");
+                    String tematica = resultado.getString("tematica");
+                    String guion = resultado.getString("guion");
+                    int disponibilidad = resultado.getInt("disponible");
+
+                    System.out.println("La información de " + tituloPelicula + " es: \n" +
+                            "Id: " + peliculaId + "\n" +
+                            "Protagonista: " + actorPrincipal + "\n" +
+                            "Tematica: " + tematica + "\n" +
+                            "Guion: " + guion + "\n" +
+                            "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                } else {
+                    System.out.println("No se encontró ninguna película con el nombre proporcionado.");
+                }
+            }
+        }
+    }
+
+    public static void buscarPeliculaPorId(int id) throws SQLException {
+        String query = "SELECT * FROM peliculas WHERE id = ?";
+        try (PreparedStatement statement = conexion.prepareStatement(query)) {
+            statement.setInt(1, id);
             try (ResultSet resultado = statement.executeQuery()) {
                 if (resultado.next()) {
                     int peliculaId = resultado.getInt("id");
@@ -62,12 +98,34 @@ public class Tools {
     }
 
     public static void modificarPelicula(String tipoDatoACambiar, String nuevoDato, int idPeliculaModificar) throws SQLException {
+
         String sqUpdate = "";
+
+
+        if (tipoDatoACambiar.equals("disponible")) {
+
+            sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
+            nuevoDato = nuevoDato.equalsIgnoreCase("true") ? "1" : "0";
+
+        } else {
+
+            sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
+        }
+
+        /*
+
+        MANERA MUY REBUSCADA Y ASQUEROSA DE HACERLO
 
         switch (tipoDatoACambiar.toLowerCase()) {
             case "titulo":
+                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
+                break;
             case "protagonista":
+                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
+                break;
             case "tematica":
+                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
+                break;
             case "guion":
                 sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
                 break;
@@ -81,6 +139,9 @@ public class Tools {
                 System.out.println("Operación no válida. Por favor, selecciona una opción válida.");
                 return;
         }
+
+         */
+
 
         try (PreparedStatement statementUpdate = conexion.prepareStatement(sqUpdate)) {
             if (tipoDatoACambiar.equals("disponible")) {
