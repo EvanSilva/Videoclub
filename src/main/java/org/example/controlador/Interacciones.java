@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import static org.example.modelo.Tools.*;
+import static org.example.vista.MethodCalls.*;
 
 public class Interacciones {
 
@@ -41,7 +42,7 @@ public class Interacciones {
         System.out.println("Dajme el Protagonista\n");
         String protagonistaNew = scanner.nextLine();
 
-        System.out.println("Dajme la Tematica ['Accion', 'Aventura', 'Ciencia Ficcion', 'Romance', 'Terror']\n");
+        System.out.println("Dajme la Tematica: " + YELLOW + "Accion" + RESET + ", " + YELLOW + "Aventura" + RESET +", " + YELLOW + "Ciencia Ficcion" + RESET +", " + YELLOW + "Romance"+ RESET + ", " + YELLOW + "Terror" + RESET + "\n");
         String tematicaNew = scanner.nextLine();
 
         System.out.println("Dajme el Resumen\n");
@@ -76,10 +77,17 @@ public class Interacciones {
 
         buscarPeliculaPorId(peliculaUpdate);
 
-        System.out.println("Dime qué quieres modificar (['Titulo', 'Protagonista', 'Tematica, 'Gion', 'Disponible']):");
+        System.out.println("Dime qué quieres modificar: " + YELLOW + "Titulo" + RESET + ", " + YELLOW + "Protagonista" + RESET +", " + YELLOW + "Tematica" + RESET +", " + YELLOW + "Gion"+ RESET + ", " + YELLOW + "Disponible" + RESET + "\n");
+
         String columnaAModificar = scanner.nextLine().toLowerCase();
 
+
         System.out.println("Dame el valor nuevo de la columna:");
+
+        if (columnaAModificar.toLowerCase().equals("disponible")) {
+            System.out.println("[1] -> Disponible | [0] -> No disponible");
+        }
+
         String valorNuevo = scanner.nextLine();
 
         modificarPelicula(columnaAModificar, valorNuevo, peliculaUpdate);

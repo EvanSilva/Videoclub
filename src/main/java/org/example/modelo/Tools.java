@@ -1,6 +1,10 @@
 package org.example.modelo;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.example.vista.MethodCalls.*;
 
 public class Tools {
 
@@ -36,12 +40,24 @@ public class Tools {
             String guion = resultado.getString(5);
             int disponible = resultado.getInt(6);
 
-            System.out.println("La información de " + titulo + " es: \n" +
-                    "Id: " + id + "\n" +
-                    "Protagonista: " + protagonista + "\n" +
-                    "Tematica: " + tematica + "\n" +
-                    "Guion: " + guion + "\n" +
-                    "Disponibilidad: " + checkDisponibilidad(disponible) + "\n");
+            if (checkDisponibilidad(disponible).equals("ALQUILADA")) {
+
+                System.out.println("La información de "+ RED  + titulo + RESET +" es: \n" +
+                        "Id: " + id + "\n" +
+                        "Protagonista: " + protagonista + "\n" +
+                        "Tematica: " + tematica + "\n" +
+                        "Guion: " + guion + "\n" +
+                        "Disponibilidad: " + checkDisponibilidad(disponible) + "\n");
+
+            } else {
+
+                System.out.println("La información de "+ GREEN  + titulo + RESET +" es: \n" +
+                        "Id: " + id + "\n" +
+                        "Protagonista: " + protagonista + "\n" +
+                        "Tematica: " + tematica + "\n" +
+                        "Guion: " + guion + "\n" +
+                        "Disponibilidad: " + checkDisponibilidad(disponible) + "\n");
+            }
         }
     }
 
@@ -57,13 +73,24 @@ public class Tools {
                     String tematica = resultado.getString("tematica");
                     String guion = resultado.getString("guion");
                     int disponibilidad = resultado.getInt("disponible");
+                    if (checkDisponibilidad(disponibilidad).equals("ALQUILADA")) {
 
-                    System.out.println("La información de " + tituloPelicula + " es: \n" +
-                            "Id: " + peliculaId + "\n" +
-                            "Protagonista: " + actorPrincipal + "\n" +
-                            "Tematica: " + tematica + "\n" +
-                            "Guion: " + guion + "\n" +
-                            "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                        System.out.println("La información de "+ RED  + tituloPelicula + RESET +" es: \n" +
+                                "Id: " + peliculaId + "\n" +
+                                "Protagonista: " + actorPrincipal + "\n" +
+                                "Tematica: " + tematica + "\n" +
+                                "Guion: " + guion + "\n" +
+                                "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+
+                    } else {
+
+                        System.out.println("La información de "+ GREEN  + tituloPelicula + RESET +" es: \n" +
+                                "Id: " + peliculaId + "\n" +
+                                "Protagonista: " + actorPrincipal + "\n" +
+                                "Tematica: " + tematica + "\n" +
+                                "Guion: " + guion + "\n" +
+                                "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                    }
                 } else {
                     System.out.println("No se encontró ninguna película con el nombre proporcionado.");
                 }
@@ -84,12 +111,26 @@ public class Tools {
                     String guion = resultado.getString("guion");
                     int disponibilidad = resultado.getInt("disponible");
 
-                    System.out.println("La información de " + tituloPelicula + " es: \n" +
-                            "Id: " + peliculaId + "\n" +
-                            "Protagonista: " + actorPrincipal + "\n" +
-                            "Tematica: " + tematica + "\n" +
-                            "Guion: " + guion + "\n" +
-                            "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                    if (checkDisponibilidad(disponibilidad).equals("ALQUILADA")) {
+
+                        System.out.println("La información de "+ RED  + tituloPelicula + RESET +" es: \n" +
+                                "Id: " + peliculaId + "\n" +
+                                "Protagonista: " + actorPrincipal + "\n" +
+                                "Tematica: " + tematica + "\n" +
+                                "Guion: " + guion + "\n" +
+                                "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+
+                    } else {
+
+                        System.out.println("La información de "+ GREEN  + tituloPelicula + RESET +" es: \n" +
+                                "Id: " + peliculaId + "\n" +
+                                "Protagonista: " + actorPrincipal + "\n" +
+                                "Tematica: " + tematica + "\n" +
+                                "Guion: " + guion + "\n" +
+                                "Disponibilidad: " + checkDisponibilidad(disponibilidad) + "\n");
+                    }
+
+
                 } else {
                     System.out.println("No se encontró ninguna película con el ID proporcionado.");
                 }
@@ -101,49 +142,26 @@ public class Tools {
 
         String sqUpdate = "";
 
+        List<String> camposValidos = Arrays.asList("titulo", "protagonista", "tematica", "guion", "disponible");
+        if (!camposValidos.contains(tipoDatoACambiar.toLowerCase())) {
+            System.out.println("Operación no válida. Por favor, selecciona una opción válida.");
+            return;
+        }
 
-        if (tipoDatoACambiar.equals("disponible")) {
+        if (tipoDatoACambiar.equals("titulo") | tipoDatoACambiar.equals("protagonista")  ) {
+
+
 
             sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-            nuevoDato = nuevoDato.equalsIgnoreCase("true") ? "1" : "0";
+            nuevoDato = nuevoDato.equalsIgnoreCase("1") ? "1" : "0";
 
         } else {
 
             sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
         }
 
-        /*
-
-        MANERA MUY REBUSCADA Y ASQUEROSA DE HACERLO
-
-        switch (tipoDatoACambiar.toLowerCase()) {
-            case "titulo":
-                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                break;
-            case "protagonista":
-                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                break;
-            case "tematica":
-                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                break;
-            case "guion":
-                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                break;
-
-            case "disponible":
-                sqUpdate = "UPDATE peliculas SET " + tipoDatoACambiar + " = ? WHERE id = ?";
-                nuevoDato = nuevoDato.equalsIgnoreCase("true") ? "1" : "0";
-                break;
-
-            default:
-                System.out.println("Operación no válida. Por favor, selecciona una opción válida.");
-                return;
-        }
-
-         */
-
-
         try (PreparedStatement statementUpdate = conexion.prepareStatement(sqUpdate)) {
+
             if (tipoDatoACambiar.equals("disponible")) {
                 statementUpdate.setInt(1, Integer.parseInt(nuevoDato));
             } else {
